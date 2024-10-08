@@ -1,15 +1,26 @@
-import * as React from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { defaultValues } from './defaultValues'
 import ProgressLine from './components/ProgressLine'
 import Question from './components/Question'
-import './App.css'
 import Timer from './components/Timer'
+import './App.css'
 
 function App() {
-  const [activeStep, setActiveStep] = React.useState(0)
+  const [activeStep, setActiveStep] = useState(0)
+
+  useLayoutEffect(() => {
+    const step = localStorage.getItem('step')
+    if (step) setActiveStep(parseInt(step))
+
+    return () => localStorage.setItem('step', step ? step.toString() : '0')
+  }, [])
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1)
+    setActiveStep((prevActiveStep) => {
+      const step = prevActiveStep + 1
+      localStorage.setItem('step', step.toString())
+      return step
+    })
   }
 
   return (

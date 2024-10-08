@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useLayoutEffect } from 'react'
 
 const Timer = ({ onTimeUp }: { onTimeUp: () => void }) => {
-  const [time, setTime] = useState(7)
+  const [time, setTime] = useState(2020)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const userTime = localStorage.getItem('time')
+
+    if (userTime) setTime(parseInt(userTime))
+
     const interval = setInterval(() => {
-      setTime((prev) => prev - 1)
+      setTime((prev) => {
+        const userTime = prev - 1
+        if (userTime === 0) {
+          clearInterval(interval)
+          //   onTimeUp()
+          return 0
+        }
+        localStorage.setItem('time', userTime.toString())
+        return userTime
+      })
     }, 1000)
-
-    if (time === 0) {
-      clearInterval(interval)
-      onTimeUp()
-    }
-
-    return () => clearInterval(interval)
-  }, [time, onTimeUp])
+  }, [])
 
   return (
     <div>
