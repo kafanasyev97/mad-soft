@@ -2,7 +2,6 @@ import { defaultValues } from './defaultValues'
 import './App.css'
 
 import * as React from 'react'
-import Button from '@mui/material/Button'
 import ProgressLine from './components/ProgressLine'
 import Question from './components/Question'
 
@@ -14,14 +13,19 @@ function App() {
   }
 
   return (
-    <div>
-      <ProgressLine activeStep={activeStep} lineLength={defaultValues.length} />
-
-      <Question activeStep={activeStep} />
-      <Button onClick={handleNext}>
-        {activeStep === defaultValues.length - 1 ? 'Finish' : 'Next'}
-      </Button>
-    </div>
+    <>
+      {activeStep < defaultValues.length ? (
+        <div>
+          <ProgressLine
+            activeStep={activeStep}
+            lineLength={defaultValues.length}
+          />
+          <Question activeStep={activeStep} handleNext={handleNext} />
+        </div>
+      ) : (
+        <h1>Форма успешно отправлена!</h1>
+      )}
+    </>
   )
 }
 

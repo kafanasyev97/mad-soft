@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -8,104 +10,149 @@ import {
   TextField,
 } from '@mui/material'
 import { defaultValues } from '../defaultValues'
-import { useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 
-type Answer = {
-  [key: number | string]: any
+type FormValues = {
+  [key: string]: any
 }
 
-const Question = ({ activeStep }: { activeStep: number }) => {
-  const [answers, setAnswers] = useState<Answer>({})
-  console.log(answers)
+const Question = ({
+  activeStep,
+  handleNext,
+}: {
+  activeStep: number
+  handleNext: any
+}) => {
+  const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
 
-  const handleChange = (value: string | string[], id: number | string) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [id]: value,
-    }))
+  useEffect(() => {
+    const currentQuestionId = defaultValues[activeStep]?.id
+    const currentType = defaultValues[activeStep]?.type
+
+    if (currentType === 'short' || currentType === 'long') {
+      setValue(`question-${currentQuestionId}`, '')
+    }
+  }, [activeStep, setValue])
+
+  const onSubmit = (data: FormValues) => {
+    console.log('Ответы:', data)
   }
 
-  const handleCheckboxChange = (option: string, id: number | string) => {
-    const currentAnswers = answers[id] || []
-    const updatedAnswers = currentAnswers.includes(option)
-      ? currentAnswers.filter((item: string) => item !== option)
-      : [...currentAnswers, option]
+  const handleCheckboxChange = (
+    option: string,
+    field: any,
+    questionId: number | string
+  ) => {
+    const currentValues = getValues(`question-${questionId}`) || []
 
-    setAnswers((prev) => ({
-      ...prev,
-      [id]: updatedAnswers,
-    }))
+    const updatedValues = currentValues.includes(option)
+      ? currentValues.filter((item: string) => item !== option)
+      : [...currentValues, option]
+
+    field.onChange(updatedValues)
   }
 
-  const renderQuestion = (type: string) => {
+  const renderQuestion = (type: string, questionId: number | string) => {
     if (type === 'single') {
       return (
-        <RadioGroup
-          value={answers[defaultValues[activeStep].id] || ''}
-          onChange={(e) =>
-            handleChange(e.target.value, defaultValues[activeStep].id)
-          }
-        >
-          {defaultValues[activeStep].options?.map((elem) => (
-            <div>
-              <FormControlLabel
-                key={defaultValues[activeStep].id}
-                value={elem}
-                control={<Radio />}
-                label={elem}
-              />
-            </div>
-          ))}
-        </RadioGroup>
+        <Controller
+          name={`question-${questionId}`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <RadioGroup {...field}>
+              {defaultValues[activeStep].options?.map((elem) => (
+                <FormControlLabel
+                  key={elem}
+                  value={elem}
+                  control={<Radio />}
+                  label={elem}
+                />
+              ))}
+            </RadioGroup>
+          )}
+        />
       )
     } else if (type === 'multiple') {
       return (
         <FormGroup>
           {defaultValues[activeStep].options?.map((elem) => (
-            <div>
-              <FormControlLabel
-                key={defaultValues[activeStep].id}
-                value={elem}
-                control={<Checkbox />}
-                label={elem}
-                onChange={() =>
-                  handleCheckboxChange(elem, defaultValues[activeStep].id)
-                }
-              />
-            </div>
+            <Controller
+              key={elem}
+              name={`question-${questionId}`}
+              control={control}
+              defaultValue={[]}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={field.value.includes(elem)}
+                      onChange={() =>
+                        handleCheckboxChange(elem, field, questionId)
+                      }
+                    />
+                  }
+                  label={elem}
+                />
+              )}
+            />
           ))}
         </FormGroup>
       )
     } else if (type === 'short') {
       return (
-        <TextField
-          fullWidth
-          value={answers[defaultValues[activeStep].id] || ''}
-          onChange={(e) =>
-            handleChange(e.target.value, defaultValues[activeStep].id)
-          }
+        <Controller
+          name={`question-${questionId}`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              multiline
+              {...field}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
       )
     } else {
       return (
-        <TextField
-          fullWidth
-          value={answers[defaultValues[activeStep].id] || ''}
-          onChange={(e) =>
-            handleChange(e.target.value, defaultValues[activeStep].id)
-          }
+        <Controller
+          name={`question-${questionId}`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              multiline
+              {...field}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
       )
     }
   }
+
+  const handleClick = () => {
+    handleNext()
+    if (activeStep >= defaultValues.length - 1) handleSubmit(onSubmit)()
+  }
+
   return (
     <>
-      <div>
-        {defaultValues[activeStep].question}
-        <FormControl>
-          {renderQuestion(defaultValues[activeStep].type)}
-        </FormControl>
-      </div>
+      <form>
+        <div>
+          <h1>{defaultValues[activeStep].question}</h1>
+          <FormControl>
+            {renderQuestion(
+              defaultValues[activeStep].type,
+              defaultValues[activeStep].id
+            )}
+          </FormControl>
+        </div>
+        <Button onClick={handleClick}>Отправить</Button>
+      </form>
     </>
   )
 }
