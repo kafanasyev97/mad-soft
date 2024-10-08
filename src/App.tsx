@@ -1,9 +1,9 @@
-import { defaultValues } from './defaultValues'
-import './App.css'
-
 import * as React from 'react'
+import { defaultValues } from './defaultValues'
 import ProgressLine from './components/ProgressLine'
 import Question from './components/Question'
+import './App.css'
+import Timer from './components/Timer'
 
 function App() {
   const [activeStep, setActiveStep] = React.useState(0)
@@ -20,6 +20,7 @@ function App() {
             activeStep={activeStep}
             lineLength={defaultValues.length}
           />
+          <Timer />
           <Question activeStep={activeStep} handleNext={handleNext} />
         </div>
       ) : (

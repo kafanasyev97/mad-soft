@@ -21,7 +21,7 @@ const Question = ({
   handleNext,
 }: {
   activeStep: number
-  handleNext: any
+  handleNext: () => void
 }) => {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
 
