@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@mui/material'
 import { defaultValues } from '../defaultValues'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
 
 type FormValues = {
   [key: string]: any
@@ -26,6 +26,16 @@ const Question = ({
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
 
   useEffect(() => {
+    const savedAnswers = localStorage.getItem('answers')
+    if (savedAnswers) {
+      const parsedAnswers = JSON.parse(savedAnswers)
+      Object.keys(parsedAnswers).forEach((key) => {
+        setValue(key, parsedAnswers[key])
+      })
+    }
+  }, [setValue])
+
+  useEffect(() => {
     const currentQuestionId = defaultValues[activeStep]?.id
     const currentType = defaultValues[activeStep]?.type
 
@@ -38,9 +48,23 @@ const Question = ({
     console.log('Ответы:', data)
   }
 
+  const updateLocalStorage = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    field: ControllerRenderProps<FormValues>,
+    questionId: number | string
+  ) => {
+    field.onChange(e.target.value)
+
+    const updatedAnswers = {
+      ...getValues(),
+      [`question-${questionId}`]: e.target.value,
+    }
+    localStorage.setItem('answers', JSON.stringify(updatedAnswers))
+  }
+
   const handleCheckboxChange = (
     option: string,
-    field: any,
+    field: ControllerRenderProps<FormValues>,
     questionId: number | string
   ) => {
     const currentValues = getValues(`question-${questionId}`) || []
@@ -50,6 +74,12 @@ const Question = ({
       : [...currentValues, option]
 
     field.onChange(updatedValues)
+
+    const updatedAnswers = {
+      ...getValues(),
+      [`question-${questionId}`]: updatedValues,
+    }
+    localStorage.setItem('answers', JSON.stringify(updatedAnswers))
   }
 
   const renderQuestion = (type: string, questionId: number | string) => {
@@ -60,7 +90,10 @@ const Question = ({
           control={control}
           defaultValue=""
           render={({ field }) => (
-            <RadioGroup {...field}>
+            <RadioGroup
+              {...field}
+              onChange={(e) => updateLocalStorage(e, field, questionId)}
+            >
               {defaultValues[activeStep].options?.map((elem) => (
                 <FormControlLabel
                   key={elem}
@@ -110,7 +143,7 @@ const Question = ({
               fullWidth
               multiline
               {...field}
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e) => updateLocalStorage(e, field, questionId)}
             />
           )}
         />
@@ -126,7 +159,7 @@ const Question = ({
               fullWidth
               multiline
               {...field}
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e) => updateLocalStorage(e, field, questionId)}
             />
           )}
         />
