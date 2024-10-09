@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Button,
   Checkbox,
@@ -12,18 +12,18 @@ import {
 import { defaultValues } from '../defaultValues'
 import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
 
+type Props = {
+  activeStep: number
+  handleNext: () => void
+}
+
 type FormValues = {
   [key: string]: any
 }
 
-const Question = ({
-  activeStep,
-  handleNext,
-}: {
-  activeStep: number
-  handleNext: () => void
-}) => {
+const Question = ({ activeStep, handleNext }: Props) => {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
+  const [disabled, setDisabled] = useState(true)
 
   useEffect(() => {
     const savedAnswers = localStorage.getItem('answers')
@@ -59,6 +59,10 @@ const Question = ({
       ...getValues(),
       [`question-${questionId}`]: e.target.value,
     }
+
+    if (e.target.value.length) {
+      if (disabled) setDisabled(false)
+    } else setDisabled(true)
     localStorage.setItem('answers', JSON.stringify(updatedAnswers))
   }
 
@@ -79,6 +83,9 @@ const Question = ({
       ...getValues(),
       [`question-${questionId}`]: updatedValues,
     }
+    if (updatedValues.length) {
+      if (disabled) setDisabled(false)
+    } else setDisabled(true)
     localStorage.setItem('answers', JSON.stringify(updatedAnswers))
   }
 
@@ -169,7 +176,11 @@ const Question = ({
 
   const handleClick = () => {
     handleNext()
-    if (activeStep >= defaultValues.length - 1) handleSubmit(onSubmit)()
+    setDisabled(true)
+    if (activeStep >= defaultValues.length - 1) {
+      localStorage.clear()
+      handleSubmit(onSubmit)()
+    }
   }
 
   return (
@@ -184,7 +195,9 @@ const Question = ({
             )}
           </FormControl>
         </div>
-        <Button onClick={handleClick}>Отправить</Button>
+        <Button disabled={disabled} onClick={handleClick}>
+          Отправить
+        </Button>
       </form>
     </>
   )
