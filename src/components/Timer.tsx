@@ -1,11 +1,13 @@
 import { useState, useLayoutEffect, useEffect } from 'react'
 
-const Timer = ({ finishTimer }: { finishTimer: (value: boolean) => void }) => {
-  const [time, setTime] = useState(7)
+type Props = {
+  finishTimer: (value: boolean) => void
+}
+
+const Timer = ({ finishTimer }: Props) => {
+  const [time, setTime] = useState(10)
 
   useLayoutEffect(() => {
-    console.log('1111')
-
     const userTime = localStorage.getItem('time')
 
     if (userTime) setTime(parseInt(userTime))
@@ -21,6 +23,8 @@ const Timer = ({ finishTimer }: { finishTimer: (value: boolean) => void }) => {
         return userTime
       })
     }, 1000)
+
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {

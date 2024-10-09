@@ -27,13 +27,11 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   const [disabled, setDisabled] = useState(true)
 
   useEffect(() => {
-    console.log('2222', isFinishTimer)
-
     if (isFinishTimer === true) {
       localStorage.clear()
       handleSubmit(onSubmit)()
     }
-  }, [isFinishTimer, handleSubmit])
+  }, [isFinishTimer, handleSubmit, getValues])
 
   useEffect(() => {
     const savedAnswers = localStorage.getItem('answers')
@@ -195,20 +193,24 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
 
   return (
     <>
-      <form>
-        <div>
-          <h1>{defaultValues[activeStep].question}</h1>
-          <FormControl>
-            {renderQuestion(
-              defaultValues[activeStep].type,
-              defaultValues[activeStep].id
-            )}
-          </FormControl>
-        </div>
-        <Button disabled={disabled} onClick={handleClick}>
-          Отправить
-        </Button>
-      </form>
+      {isFinishTimer ? (
+        <h1>Не успел, но форма отправилась</h1>
+      ) : (
+        <form>
+          <div>
+            <h1>{defaultValues[activeStep].question}</h1>
+            <FormControl>
+              {renderQuestion(
+                defaultValues[activeStep].type,
+                defaultValues[activeStep].id
+              )}
+            </FormControl>
+          </div>
+          <Button disabled={disabled} onClick={handleClick}>
+            Отправить
+          </Button>
+        </form>
+      )}
     </>
   )
 }
