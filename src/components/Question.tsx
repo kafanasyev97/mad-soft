@@ -15,15 +15,25 @@ import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
 type Props = {
   activeStep: number
   handleNext: () => void
+  isFinishTimer: boolean
 }
 
 type FormValues = {
   [key: string]: any
 }
 
-const Question = ({ activeStep, handleNext }: Props) => {
+const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
   const [disabled, setDisabled] = useState(true)
+
+  useEffect(() => {
+    console.log('2222', isFinishTimer)
+
+    if (isFinishTimer === true) {
+      localStorage.clear()
+      handleSubmit(onSubmit)()
+    }
+  }, [isFinishTimer, handleSubmit])
 
   useEffect(() => {
     const savedAnswers = localStorage.getItem('answers')

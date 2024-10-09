@@ -7,6 +7,7 @@ import './App.css'
 
 function App() {
   const [activeStep, setActiveStep] = useState(0)
+  const [isFinishedTimer, setIsFinishedTimer] = useState(false)
 
   useLayoutEffect(() => {
     const step = localStorage.getItem('step')
@@ -31,9 +32,15 @@ function App() {
             activeStep={activeStep}
             lineLength={defaultValues.length}
           />
-          <Timer />
-          <Question activeStep={activeStep} handleNext={handleNext} />
+          <Timer finishTimer={setIsFinishedTimer} />
+          <Question
+            isFinishTimer={isFinishedTimer}
+            activeStep={activeStep}
+            handleNext={handleNext}
+          />
         </div>
+      ) : isFinishedTimer ? (
+        <h1>Не успел, но форма отправилась</h1>
       ) : (
         <h1>Форма успешно отправлена!</h1>
       )}
