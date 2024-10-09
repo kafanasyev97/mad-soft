@@ -1,7 +1,7 @@
 import { useState, useLayoutEffect } from 'react'
 
 const Timer = ({ onTimeUp }: { onTimeUp: () => void }) => {
-  const [time, setTime] = useState(2020)
+  const [time, setTime] = useState(50)
 
   useLayoutEffect(() => {
     const userTime = localStorage.getItem('time')
@@ -10,12 +10,12 @@ const Timer = ({ onTimeUp }: { onTimeUp: () => void }) => {
 
     const interval = setInterval(() => {
       setTime((prev) => {
-        const userTime = prev - 1
-        if (userTime === 0) {
+        if (prev === 0) {
           clearInterval(interval)
           //   onTimeUp()
           return 0
         }
+        const userTime = prev - 1
         localStorage.setItem('time', userTime.toString())
         return userTime
       })
