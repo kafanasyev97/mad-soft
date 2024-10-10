@@ -31,7 +31,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
       localStorage.clear()
       handleSubmit(onSubmit)()
     }
-  }, [isFinishTimer, handleSubmit, getValues])
+  }, [isFinishTimer, handleSubmit])
 
   useEffect(() => {
     const savedAnswers = localStorage.getItem('answers')

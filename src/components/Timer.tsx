@@ -1,17 +1,13 @@
-import { useState, useLayoutEffect, useEffect } from 'react'
+import { useState, useLayoutEffect } from 'react'
 
 type Props = {
   finishTimer: (value: boolean) => void
 }
 
 const Timer = ({ finishTimer }: Props) => {
-  const [time, setTime] = useState(10)
+  const [time, setTime] = useState(8)
 
   useLayoutEffect(() => {
-    const userTime = localStorage.getItem('time')
-
-    if (userTime) setTime(parseInt(userTime))
-
     const interval = setInterval(() => {
       setTime((prev) => {
         if (prev === 0) {
@@ -19,7 +15,6 @@ const Timer = ({ finishTimer }: Props) => {
           return 0
         }
         const userTime = prev - 1
-        localStorage.setItem('time', userTime.toString())
         return userTime
       })
     }, 1000)
@@ -27,10 +22,27 @@ const Timer = ({ finishTimer }: Props) => {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (time === 0) {
       finishTimer(true)
     }
+    let userTime = localStorage.getItem('time')
+    let userStartTime = localStorage.getItem('startTime')
+
+    if (userTime === null) {
+      userTime = time.toString()
+      localStorage.setItem('time', userTime)
+    }
+    if (userStartTime === null) {
+      userStartTime = Math.floor(Date.now() / 1000).toString()
+      localStorage.setItem('startTime', userStartTime)
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000) - parseInt(userStartTime)
+    const resultTime = parseInt(userTime) - currentTime
+
+    if (resultTime <= 0) setTime(0)
+    else setTime(resultTime)
   }, [time, finishTimer])
 
   return (
