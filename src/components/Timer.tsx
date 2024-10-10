@@ -5,7 +5,7 @@ type Props = {
 }
 
 const Timer = ({ finishTimer }: Props) => {
-  const [time, setTime] = useState(8)
+  const [time, setTime] = useState(20)
 
   useLayoutEffect(() => {
     const interval = setInterval(() => {

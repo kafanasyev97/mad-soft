@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import {
   Button,
   Checkbox,
@@ -26,6 +26,18 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
   const [disabled, setDisabled] = useState(true)
 
+  useLayoutEffect(() => {
+    const answers = localStorage.getItem('answers')
+    const step = localStorage.getItem('step')
+
+    if (answers && step !== null) {
+      const parsedAnswers = JSON.parse(answers)
+      const key = `question-${parseInt(step) + 1}`
+      if (Object.keys(parsedAnswers).includes(key) && parsedAnswers[key].length)
+        setDisabled(false)
+    }
+  }, [disabled])
+
   useEffect(() => {
     if (isFinishTimer === true) {
       localStorage.clear()
@@ -37,6 +49,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
     const savedAnswers = localStorage.getItem('answers')
     if (savedAnswers) {
       const parsedAnswers = JSON.parse(savedAnswers)
+
       Object.keys(parsedAnswers).forEach((key) => {
         setValue(key, parsedAnswers[key])
       })
@@ -107,6 +120,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
           render={({ field }) => (
             <RadioGroup
               {...field}
+              value={getValues(`question-${questionId}`) || ''}
               onChange={(e) => updateLocalStorage(e, field, questionId)}
             >
               {defaultValues[activeStep].options?.map((elem) => (

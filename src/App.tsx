@@ -12,6 +12,7 @@ function App() {
   useLayoutEffect(() => {
     const step = localStorage.getItem('step')
     if (step) setActiveStep(parseInt(step))
+    else localStorage.setItem('step', '0')
 
     return () => localStorage.setItem('step', step ? step.toString() : '0')
   }, [])
