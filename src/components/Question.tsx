@@ -34,18 +34,14 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
       const parsedAnswers = JSON.parse(answers)
       const key = `question-${parseInt(step) + 1}`
       if (Object.keys(parsedAnswers).includes(key) && parsedAnswers[key].length)
-        setDisabled(false)
+        if (disabled) {
+          setDisabled(false)
+        }
     }
   }, [disabled])
 
   useEffect(() => {
-    if (isFinishTimer === true) {
-      localStorage.clear()
-      handleSubmit(onSubmit)()
-    }
-  }, [isFinishTimer, handleSubmit])
-
-  useEffect(() => {
+    // Заносим данные только в форму при перезагрузке
     const savedAnswers = localStorage.getItem('answers')
     if (savedAnswers) {
       const parsedAnswers = JSON.parse(savedAnswers)
@@ -57,19 +53,18 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   }, [setValue])
 
   useEffect(() => {
-    const currentQuestionId = defaultValues[activeStep]?.id
-    const currentType = defaultValues[activeStep]?.type
-
-    if (currentType === 'short' || currentType === 'long') {
-      setValue(`question-${currentQuestionId}`, '')
+    if (isFinishTimer === true) {
+      localStorage.clear()
+      handleSubmit(onSubmit)()
     }
-  }, [activeStep, setValue])
+  }, [isFinishTimer, handleSubmit])
 
   const onSubmit = (data: FormValues) => {
     console.log('Ответы:', data)
   }
 
   const updateLocalStorage = (
+    // Не вызывается сразу после перезагрузки, только после изменения поля
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     field: ControllerRenderProps<FormValues>,
     questionId: number | string
@@ -164,9 +159,9 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
     } else if (type === 'short') {
       return (
         <Controller
+          key={`question-${questionId}`}
           name={`question-${questionId}`}
           control={control}
-          defaultValue=""
           render={({ field }) => (
             <TextField
               fullWidth
@@ -180,9 +175,9 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
     } else {
       return (
         <Controller
+          key={`question-${questionId}`}
           name={`question-${questionId}`}
           control={control}
-          defaultValue=""
           render={({ field }) => (
             <TextField
               fullWidth
