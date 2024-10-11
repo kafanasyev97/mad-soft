@@ -1,8 +1,7 @@
 import { useLayoutEffect, useState } from 'react'
 import { defaultValues } from './defaultValues'
-import ProgressLine from './components/ProgressLine'
 import Question from './components/Question'
-import Timer from './components/Timer'
+import FormInfo from './components/FormInfo'
 import './App.css'
 
 function App() {
@@ -29,11 +28,12 @@ function App() {
     <>
       {activeStep < defaultValues.length ? (
         <div>
-          <ProgressLine
+          <FormInfo
+            isFinishedTimer={isFinishedTimer}
             activeStep={activeStep}
             lineLength={defaultValues.length}
+            finishTimer={setIsFinishedTimer}
           />
-          <Timer finishTimer={setIsFinishedTimer} />
           <Question
             isFinishTimer={isFinishedTimer}
             activeStep={activeStep}

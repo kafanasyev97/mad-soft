@@ -1,4 +1,4 @@
-interface Props {
+type Props = {
   activeStep: number
   lineLength: number
 }
