@@ -1,16 +1,11 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Radio,
-  RadioGroup,
-  TextField,
-} from '@mui/material'
+import { Button } from '@mui/material'
 import { defaultValues } from '../defaultValues'
-import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
+import { useForm, ControllerRenderProps } from 'react-hook-form'
+import RadioQuestion from './inputs/Radio'
+import CheckboxQuestion from './inputs/Checkbox'
+import InputQuestion from './inputs/Input'
+import InputAreaQuestion from './inputs/InputArea'
 
 type Props = {
   activeStep: number
@@ -18,7 +13,7 @@ type Props = {
   isFinishTimer: boolean
 }
 
-type FormValues = {
+export type FormValues = {
   [key: string]: any
 }
 
@@ -112,84 +107,36 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
 
     if (type === 'single') {
       return (
-        <Controller
-          key={`question-${questionId}`}
-          name={`question-${questionId}`}
+        <RadioQuestion
           control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <RadioGroup
-              {...field}
-              onChange={(e) => updateLocalStorage(e, field, questionId)}
-            >
-              {defaultValues[activeStep].options?.map((elem) => (
-                <FormControlLabel
-                  key={elem}
-                  value={elem}
-                  control={<Radio />}
-                  label={elem}
-                />
-              ))}
-            </RadioGroup>
-          )}
+          activeStep={activeStep}
+          questionId={questionId}
+          updateLocalStorage={updateLocalStorage}
         />
       )
     } else if (type === 'multiple') {
       return (
-        <FormGroup>
-          {defaultValues[activeStep].options?.map((elem) => (
-            <Controller
-              key={elem}
-              name={`question-${questionId}`}
-              control={control}
-              defaultValue={[]}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={field.value.includes(elem)}
-                      onChange={() =>
-                        handleCheckboxChange(elem, field, questionId)
-                      }
-                    />
-                  }
-                  label={elem}
-                />
-              )}
-            />
-          ))}
-        </FormGroup>
+        <CheckboxQuestion
+          activeStep={activeStep}
+          questionId={questionId}
+          control={control}
+          handleCheckboxChange={handleCheckboxChange}
+        />
       )
     } else if (type === 'short') {
       return (
-        <Controller
-          key={`question-${questionId}`}
-          name={`question-${questionId}`}
+        <InputQuestion
           control={control}
-          render={({ field }) => (
-            <TextField
-              multiline
-              {...field}
-              onChange={(e) => updateLocalStorage(e, field, questionId)}
-            />
-          )}
+          questionId={questionId}
+          updateLocalStorage={updateLocalStorage}
         />
       )
     } else {
       return (
-        <Controller
-          key={`question-${questionId}`}
-          name={`question-${questionId}`}
+        <InputAreaQuestion
           control={control}
-          render={({ field }) => (
-            <TextField
-              rows={4}
-              sx={{ width: '25rem' }}
-              multiline
-              {...field}
-              onChange={(e) => updateLocalStorage(e, field, questionId)}
-            />
-          )}
+          questionId={questionId}
+          updateLocalStorage={updateLocalStorage}
         />
       )
     }
@@ -210,7 +157,6 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
         <h1 className="form-response">Время вышло!</h1>
       ) : (
         <form className="form">
-          {/* <div> */}
           <h1 className="form__question">
             {defaultValues[activeStep].question}
           </h1>
@@ -220,7 +166,6 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
               defaultValues[activeStep].id
             )}
           </div>
-          {/* </div> */}
           <Button
             sx={{ alignSelf: 'start' }}
             disabled={disabled}
