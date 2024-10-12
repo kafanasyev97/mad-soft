@@ -164,7 +164,6 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
           control={control}
           render={({ field }) => (
             <TextField
-              fullWidth
               multiline
               {...field}
               onChange={(e) => updateLocalStorage(e, field, questionId)}
@@ -180,7 +179,8 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
           control={control}
           render={({ field }) => (
             <TextField
-              fullWidth
+              rows={4}
+              sx={{ width: '25rem' }}
               multiline
               {...field}
               onChange={(e) => updateLocalStorage(e, field, questionId)}
@@ -205,17 +205,23 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
       {isFinishTimer ? (
         <h1 className="form-response">Время вышло!</h1>
       ) : (
-        <form>
+        <form className="form">
+          {/* <div> */}
+          <h1 className="form__question">
+            {defaultValues[activeStep].question}
+          </h1>
           <div>
-            <h1>{defaultValues[activeStep].question}</h1>
-            <FormControl>
-              {renderQuestion(
-                defaultValues[activeStep].type,
-                defaultValues[activeStep].id
-              )}
-            </FormControl>
+            {renderQuestion(
+              defaultValues[activeStep].type,
+              defaultValues[activeStep].id
+            )}
           </div>
-          <Button disabled={disabled} onClick={handleClick}>
+          {/* </div> */}
+          <Button
+            sx={{ alignSelf: 'start' }}
+            disabled={disabled}
+            onClick={handleClick}
+          >
             Отправить
           </Button>
         </form>
