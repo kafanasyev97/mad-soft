@@ -10,7 +10,9 @@ const ProgressLine = ({ activeStep, lineLength }: Props) => {
         {Array.from({ length: lineLength }).map((_, index) => (
           <div
             key={index}
-            className={`step ${index === activeStep ? 'active' : ''}`}
+            className={`step ${index < activeStep ? 'ready' : ''} ${
+              index === activeStep ? 'active' : ''
+            }`}
           ></div>
         ))}
       </div>
