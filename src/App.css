@@ -13,7 +13,7 @@
 .header__timer-block {
   border: 1px solid rgb(92, 88, 88);
   width: 6rem;
-  height: 35px;
+  height: 2.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,11 +49,6 @@
   margin-top: 50px;
 }
 
-.progress-container {
-  width: 100%;
-  margin-top: 16px;
-}
-
 .progress-line {
   position: relative;
   height: 4px;
@@ -71,14 +66,14 @@
 .progress-steps {
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   gap: 10px;
 }
 
 .step {
   width: 40px;
   height: 10px;
-  /* border-radius: 50%; */
+  border-radius: 2px;
   background-color: #e0e0e0;
 }
 
