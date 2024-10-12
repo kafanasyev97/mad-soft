@@ -25,6 +25,7 @@ type FormValues = {
 const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   const { control, handleSubmit, getValues, setValue } = useForm<FormValues>()
   const [disabled, setDisabled] = useState(true)
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
 
   useLayoutEffect(() => {
     const answers = localStorage.getItem('answers')
@@ -40,7 +41,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
     }
   }, [disabled])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Заносим данные только в форму при перезагрузке
     const savedAnswers = localStorage.getItem('answers')
     if (savedAnswers) {
@@ -50,6 +51,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
         setValue(key, parsedAnswers[key])
       })
     }
+    setIsDataLoaded(true)
   }, [setValue])
 
   useEffect(() => {
@@ -106,16 +108,18 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   }
 
   const renderQuestion = (type: string, questionId: number | string) => {
+    if (!isDataLoaded) return null
+
     if (type === 'single') {
       return (
         <Controller
+          key={`question-${questionId}`}
           name={`question-${questionId}`}
           control={control}
           defaultValue=""
           render={({ field }) => (
             <RadioGroup
               {...field}
-              value={getValues(`question-${questionId}`) || ''}
               onChange={(e) => updateLocalStorage(e, field, questionId)}
             >
               {defaultValues[activeStep].options?.map((elem) => (
