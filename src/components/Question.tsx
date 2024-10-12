@@ -203,7 +203,7 @@ const Question = ({ activeStep, handleNext, isFinishTimer }: Props) => {
   return (
     <>
       {isFinishTimer ? (
-        <h1>Не успел, но форма отправилась</h1>
+        <h1 className="form-response">Время вышло!</h1>
       ) : (
         <form>
           <div>

@@ -8,18 +8,18 @@ type Props = {
   finishTimer: (value: boolean) => void
 }
 
-const FormInfo = ({
+const Header = ({
   isFinishedTimer,
   activeStep,
   lineLength,
   finishTimer,
 }: Props) => {
   return isFinishedTimer ? null : (
-    <div>
-      <ProgressLine activeStep={activeStep} lineLength={lineLength} />
+    <div className="header">
       <Timer finishTimer={finishTimer} />
+      <ProgressLine activeStep={activeStep} lineLength={lineLength} />
     </div>
   )
 }
 
-export default FormInfo
+export default Header

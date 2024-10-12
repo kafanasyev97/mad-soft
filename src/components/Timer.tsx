@@ -5,7 +5,7 @@ type Props = {
 }
 
 const Timer = ({ finishTimer }: Props) => {
-  const [time, setTime] = useState(100)
+  const [time, setTime] = useState(10)
 
   useLayoutEffect(() => {
     const interval = setInterval(() => {
@@ -14,8 +14,7 @@ const Timer = ({ finishTimer }: Props) => {
           clearInterval(interval)
           return 0
         }
-        const userTime = prev - 1
-        return userTime
+        return prev - 1
       })
     }, 1000)
 
@@ -46,11 +45,15 @@ const Timer = ({ finishTimer }: Props) => {
   }, [time, finishTimer])
 
   return (
-    <div>
-      <h2>
-        Оставшееся время: {`${Math.floor(time / 60)}`.padStart(2, '0')}:
-        {`${time % 60}`.padStart(2, '0')} секунд
-      </h2>
+    <div className="header__timer">
+      <h1>Тестирование</h1>
+      <div className="header__timer-block">
+        <span className="header__numbers">
+          {`${Math.floor(time / 60)}`.padStart(2, '0')}
+          <span> : </span>
+          {`${time % 60}`.padStart(2, '0')}
+        </span>
+      </div>
     </div>
   )
 }

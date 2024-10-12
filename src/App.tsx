@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react'
 import { defaultValues } from './defaultValues'
 import Question from './components/Question'
-import FormInfo from './components/FormInfo'
+import Header from './components/Header'
 import './App.css'
 
 function App() {
@@ -27,8 +27,8 @@ function App() {
   return (
     <>
       {activeStep < defaultValues.length ? (
-        <div>
-          <FormInfo
+        <div className="container">
+          <Header
             isFinishedTimer={isFinishedTimer}
             activeStep={activeStep}
             lineLength={defaultValues.length}
@@ -41,7 +41,7 @@ function App() {
           />
         </div>
       ) : (
-        <h1>Форма успешно отправлена!</h1>
+        <h1 className="form-response">Форма успешно отправлена!</h1>
       )}
     </>
   )
